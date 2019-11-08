@@ -66,8 +66,8 @@ def train(prepared_train_labels, train_images_folder, num_refinement_stages, bas
         else:
             load_state(net, checkpoint)
             if not weights_only:
-                optimizer.load_state_dict(checkpoint['optimizer'])
                 scheduler.load_state_dict(checkpoint['scheduler'])
+                optimizer.load_state_dict(checkpoint['optimizer'])
                 num_iter = checkpoint['iter']
                 current_epoch = checkpoint['current_epoch']
 
@@ -125,10 +125,10 @@ def train(prepared_train_labels, train_images_folder, num_refinement_stages, bas
                             'iter': num_iter,
                             'current_epoch': epochId},
                            snapshot_name)
-            if num_iter % val_after == 0:
-                print('Validation...')
-                evaluate(val_labels, val_output_name, val_images_folder, net)
-                net.train()
+            #if num_iter % val_after == 0:
+            #    print('Validation...')
+            #    evaluate(val_labels, val_output_name, val_images_folder, net)
+            #    net.train()
 
 
 if __name__ == '__main__':

@@ -17,9 +17,12 @@ from modules.load_state import load_state
 def run_coco_eval(gt_file_path, dt_file_path):
     annotation_type = 'keypoints'
     print('Running test for {} results.'.format(annotation_type))
+    print('gt_file_path: {0}\n'.format(gt_file_path))
+    print('dt_file_path: {0}\n'.format(dt_file_path))
 
     coco_gt = COCO(gt_file_path)
     coco_dt = coco_gt.loadRes(dt_file_path)
+    print('coco_gt: {0}\n'.format(coco_gt))
 
     result = COCOeval(coco_gt, coco_dt, annotation_type)
     result.evaluate()
@@ -123,6 +126,9 @@ def evaluate(labels, output_name, images_folder, net, multiscale=False, visualiz
     for sample in dataset:
         file_name = sample['file_name']
         img = sample['img']
+
+        print('fname:{0}\n', file_name)
+        print('size:{0}\n', img.shape)
 
         avg_heatmaps, avg_pafs = infer(net, img, scales, base_height, stride)
 
