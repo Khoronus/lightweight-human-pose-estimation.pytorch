@@ -1,3 +1,8 @@
 *.pyc
 __pycache__
 .idea/
+datasets/annotations
+datasets/test2017
+datasets/train2017
+datasets/val2017
+customdatasets

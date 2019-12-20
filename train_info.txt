@@ -1,0 +1,18 @@
+Original dataset
+python train.py --train-images-folder datasets\train2017\ --prepared-train-labels prepared_train_annotation.pkl --val-labels datasets\annotations\val_subset.json --val-images-folder datasets\val2017\ --checkpoint-path mobilenet_sgd_68.848.pth.tar --from-mobilenet --batch-size 10
+python train.py --train-images-folder datasets/train2017/ --prepared-train-labels prepared_train_annotation.pkl --val-labels datasets/annotations/val_subset.json --val-images-folder datasets/val2017/ --checkpoint-path default_checkpoints/checkpoint_iter_420000.pth --weights-only --batch-size 10
+python train.py --train-images-folder datasets/train2017/ --prepared-train-labels prepared_train_annotation.pkl --val-labels val_subset.json --val-images-folder datasets/val2017/ --checkpoint-path default_checkpoints/checkpoint_iter_100000.pth --weights-only --num-refinement-stages 3 --batch-size 10
+
+Pretrain
+python scripts/prepare_train_labels.py --labels customdatasets/annotations/data.json
+python scripts/make_val_subset.py --labels customdatasets/annotations/data.json
+IMPORTANT: COPY val_subset.json in customdataset/annotations
+
+
+Custom dataset
+NOTE: Copy val_subset inside the customdatasets/annotations folder
+python train.py --train-images-folder customdatasets/data/ --prepared-train-labels prepared_train_annotation.pkl --val-labels customdatasets/annotations/val_subset.json --val-images-folder customdatasets/data/ --checkpoint-path mobilenet_sgd_68.848.pth.tar --from-mobilenet --batch-size 10
+python train.py --train-images-folder customdatasets/data/ --prepared-train-labels prepared_train_annotation.pkl --val-labels customdatasets/annotations/val_subset.json --val-images-folder customdatasets/data/ --checkpoint-path default_checkpoints/checkpoint_iter_420000.pth --weights-only --batch-size 10
+python train.py --train-images-folder customdatasets/data/ --prepared-train-labels prepared_train_annotation.pkl --val-labels val_subset.json --val-images-folder customdatasets/data/ --checkpoint-path default_checkpoints/checkpoint_iter_100000.pth --weights-only --num-refinement-stages 3 --batch-size 10
+
+

@@ -12,12 +12,14 @@ def prepare_annotations(annotations_per_image, images_info, net_input_size):
     :param net_input_size: network input size during training
     :return: list of prepared annotations
     """
+    print('prepare_annotations\n')
     prepared_annotations = []
     for _, annotations in annotations_per_image.items():
         previous_centers = []
         for annotation in annotations[0]:
             if (annotation['num_keypoints'] < 5
                     or annotation['area'] < 32 * 32):
+                print('[invalid] {} {}\n'.format(annotation['num_keypoints'], annotation['area']))
                 continue
             person_center = [annotation['bbox'][0] + annotation['bbox'][2] / 2,
                              annotation['bbox'][1] + annotation['bbox'][3] / 2]
@@ -114,8 +116,10 @@ if __name__ == '__main__':
         if image_id in annotations_per_image_mapping:
             annotations_per_image_mapping[image_id][1] = crowd_segmentations
 
+    print('set_images_info\n')
     images_info = {}
     for image_info in data['images']:
+        print('add imageinfo: {} {}\n'.format(image_info['id'], image_info['file_name']))
         images_info[image_info['id']] = image_info
 
     prepared_annotations = prepare_annotations(annotations_per_image_mapping, images_info, args.net_input_size)
