@@ -1,3 +1,8 @@
+Pretrain
+python scripts/prepare_train_labels.py --labels datasets/annotations/person_keypoints_train2017.json
+python scripts/make_val_subset.py --labels datasets/annotations/person_keypoints_val2017.json
+IMPORTANT: COPY val_subset.json in dataset/annotations
+
 Original dataset
 python train.py --train-images-folder datasets\train2017\ --prepared-train-labels prepared_train_annotation.pkl --val-labels datasets\annotations\val_subset.json --val-images-folder datasets\val2017\ --checkpoint-path mobilenet_sgd_68.848.pth.tar --from-mobilenet --batch-size 10
 python train.py --train-images-folder datasets/train2017/ --prepared-train-labels prepared_train_annotation.pkl --val-labels datasets/annotations/val_subset.json --val-images-folder datasets/val2017/ --checkpoint-path default_checkpoints/checkpoint_iter_420000.pth --weights-only --batch-size 10
@@ -15,4 +20,5 @@ python train.py --train-images-folder customdatasets/data/ --prepared-train-labe
 python train.py --train-images-folder customdatasets/data/ --prepared-train-labels prepared_train_annotation.pkl --val-labels customdatasets/annotations/val_subset.json --val-images-folder customdatasets/data/ --checkpoint-path default_checkpoints/checkpoint_iter_420000.pth --weights-only --batch-size 10
 python train.py --train-images-folder customdatasets/data/ --prepared-train-labels prepared_train_annotation.pkl --val-labels val_subset.json --val-images-folder customdatasets/data/ --checkpoint-path default_checkpoints/checkpoint_iter_100000.pth --weights-only --num-refinement-stages 3 --batch-size 10
 
-
+Validation
+python demo.py --checkpoint-path default_checkpoints/checkpoint_iter_30000.pth --video "C:/workspace/university/chuo/projects_online/HumanRecognition/binary/data/2019_11_28_01_53_43.avi"
