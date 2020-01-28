@@ -6,8 +6,11 @@ python scripts/make_val_subset.py --labels datasets/annotations/person_keypoints
 IMPORTANT: COPY val_subset.json in dataset/annotations
 
 Original dataset
+> To train from MobileNet weights
 python train.py --train-images-folder datasets/train2017/ --prepared-train-labels prepared_train_annotation.pkl --val-labels datasets/annotations/val_subset.json --val-images-folder datasets/val2017/ --checkpoint-path mobilenet_sgd_68.848.pth.tar --from-mobilenet --batch-size 10
+> To train from checkpoint from previous step
 python train.py --train-images-folder datasets/train2017/ --prepared-train-labels prepared_train_annotation.pkl --val-labels datasets/annotations/val_subset.json --val-images-folder datasets/val2017/ --checkpoint-path default_checkpoints/checkpoint_iter_420000.pth --weights-only --batch-size 10
+> To train from checkpoint from previous step and 3 refinement stages in network,
 python train.py --train-images-folder datasets/train2017/ --prepared-train-labels prepared_train_annotation.pkl --val-labels datasets/annotations/val_subset.json --val-images-folder datasets/val2017/ --checkpoint-path default_checkpoints/checkpoint_iter_100000.pth --weights-only --num-refinement-stages 3 --batch-size 10
 
 Validation
@@ -23,8 +26,11 @@ IMPORTANT: COPY val_subset.json in customdataset/annotations
 
 Custom dataset
 NOTE: Copy val_subset inside the customdatasets/annotations folder
+> To train from MobileNet weights
 python train.py --train-images-folder customdatasets/data/ --prepared-train-labels prepared_train_annotation.pkl --val-labels customdatasets/annotations/val_subset.json --val-images-folder customdatasets/data/ --checkpoint-path mobilenet_sgd_68.848.pth.tar --from-mobilenet --batch-size 10
+> To train from checkpoint from previous step
 python train.py --train-images-folder customdatasets/data/ --prepared-train-labels prepared_train_annotation.pkl --val-labels customdatasets/annotations/val_subset.json --val-images-folder customdatasets/data/ --checkpoint-path default_checkpoints/checkpoint_iter_420000.pth --weights-only --batch-size 10
+> To train from checkpoint from previous step and 3 refinement stages in network,
 python train.py --train-images-folder customdatasets/data/ --prepared-train-labels prepared_train_annotation.pkl --val-labels customdatasets/annotations/val_subset.json --val-images-folder customdatasets/data/ --checkpoint-path default_checkpoints/checkpoint_iter_100000.pth --weights-only --num-refinement-stages 3 --batch-size 10
 
 or (for small training set)
