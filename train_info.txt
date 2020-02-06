@@ -42,6 +42,7 @@ python train.py --train-images-folder customdatasets/data/ --prepared-train-labe
 
 Validation
 python demo.py --checkpoint-path default_checkpoints/checkpoint_iter_30000.pth --video "C:/workspace/university/chuo/projects_online/HumanRecognition/binary/data/2019_11_28_01_53_43.avi"
+python demo.py --checkpoint-path default_checkpoints/checkpoint_iter_30000.pth --image "customdatasets/data/2019_11_15_10_59_31 106754.jpg"
 
 
 
@@ -73,3 +74,7 @@ python train.py --train-images-folder customdatasets/data/ --prepared-train-labe
 
 python demo.py --checkpoint-path default_checkpoints/checkpoint_iter_500.pth --image "C:\workspace\programs\ModProg\lightweight-human-pose-estimation.pytorch\customdatasets\data\2019_11_28_01_53_43 814226.jpg"
 python demo.py --checkpoint-path default_checkpoints/checkpoint_iter_500.pth --video "C:/workspace/university/chuo/projects_online/HumanRecognition/binary/data/2019_11_28_01_53_43.avi"
+
+
+Heatmaps
+https://www.programcreek.com/python/example/89433/cv2.applyColorMap
