@@ -72,7 +72,9 @@ class Scale(object):
         sample['image'] = cv2.resize(sample['image'], dsize=(0, 0), fx=scale, fy=scale)
         label['img_height'], label['img_width'], _ = sample['image'].shape
         sample['mask'] = cv2.resize(sample['mask'], dsize=(0, 0), fx=scale, fy=scale)
-
+        
+        #print('mask scale: {}'.format(sample['mask'].shape))
+        
         label['objpos'][0] *= scale
         label['objpos'][1] *= scale
         for keypoint in sample['label']['keypoints']:
@@ -203,6 +205,107 @@ class CropPad(object):
         label['img_width'] = self._crop_x
         label['img_height'] = self._crop_y
 
+        label['objpos'][0] += offset_left
+        label['objpos'][1] += offset_up
+        for keypoint in label['keypoints']:
+            keypoint[0] += offset_left
+            keypoint[1] += offset_up
+        for other_annotation in label['processed_other_annotations']:
+            for keypoint in other_annotation['keypoints']:
+                keypoint[0] += offset_left
+                keypoint[1] += offset_up
+
+        return sample
+
+    def _inside(self, point, width, height):
+        if point[0] < 0 or point[1] < 0:
+            return False
+        if point[0] >= width or point[1] >= height:
+            return False
+        return True
+
+
+class CropPad2(object):
+    def __init__(self, pad, center_perterb_max=40, crop_x=368, crop_y=368):
+        self._pad = pad
+        self._center_perterb_max = center_perterb_max
+        self._crop_x = crop_x
+        self._crop_y = crop_y
+
+    def __call__(self, sample):
+        prob_x = 0
+        prob_y = 0
+        self._center_perterb_max = 480
+        self._crop_x = 960
+        self._crop_y = 960
+
+        offset_x = int((prob_x - 0.5) * 2 * self._center_perterb_max)
+        offset_y = int((prob_y - 0.5) * 2 * self._center_perterb_max)
+        label = sample['label']
+        shifted_center = (label['objpos'][0] + offset_x, label['objpos'][1] + offset_y)
+        offset_left = -int(shifted_center[0] - self._crop_x / 2)
+        offset_up = -int(shifted_center[1] - self._crop_y / 2)
+
+        cropped_image = np.empty(shape=(self._crop_y, self._crop_x, 3), dtype=np.uint8)
+        for i in range(3):
+            cropped_image[:, :, i].fill(self._pad[i])
+        cropped_mask = np.empty(shape=(self._crop_y, self._crop_x), dtype=np.uint8)
+        cropped_mask.fill(1)
+
+        image_x_start = int(shifted_center[0] - self._crop_x / 2)
+        image_y_start = int(shifted_center[1] - self._crop_y / 2)
+        image_x_finish = image_x_start + self._crop_x
+        image_y_finish = image_y_start + self._crop_y
+        crop_x_start = 0
+        crop_y_start = 0
+        crop_x_finish = self._crop_x
+        crop_y_finish = self._crop_y
+
+        w, h = label['img_width'], label['img_height']
+        should_crop = True
+        if image_x_start < 0:  # Adjust crop area
+            crop_x_start -= image_x_start
+            image_x_start = 0
+        if image_x_start >= w:
+            should_crop = False
+
+        if image_y_start < 0:
+            crop_y_start -= image_y_start
+            image_y_start = 0
+        if image_y_start >= w:
+            should_crop = False
+
+        if image_x_finish > w:
+            diff = image_x_finish - w
+            image_x_finish -= diff
+            crop_x_finish -= diff
+        if image_x_finish < 0:
+            should_crop = False
+
+        if image_y_finish > h:
+            diff = image_y_finish - h
+            image_y_finish -= diff
+            crop_y_finish -= diff
+        if image_y_finish < 0:
+            should_crop = False
+
+        if should_crop:
+            cropped_image[crop_y_start:crop_y_finish, crop_x_start:crop_x_finish, :] =\
+                sample['image'][image_y_start:image_y_finish, image_x_start:image_x_finish, :]
+            cropped_mask[crop_y_start:crop_y_finish, crop_x_start:crop_x_finish] =\
+                sample['mask'][image_y_start:image_y_finish, image_x_start:image_x_finish]
+
+        #cv2.imshow('normal_image', sample['image'])
+        #cv2.imshow('cropped_image', cropped_image)
+        #cv2.waitKey(0)
+
+        #sample['image'] = cropped_image
+        #sample['mask'] = cropped_mask
+        label['img_width'] = sample['image'].shape[2]#self._crop_x
+        label['img_height'] = sample['image'].shape[1]#self._crop_y
+
+        offset_left = 0
+        offset_up = 0
         label['objpos'][0] += offset_left
         label['objpos'][1] += offset_up
         for keypoint in label['keypoints']:

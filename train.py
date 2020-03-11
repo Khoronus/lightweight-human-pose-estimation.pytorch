@@ -9,12 +9,13 @@ from torch.utils.data import DataLoader
 from torchvision import transforms
 
 from datasets.coco import CocoTrainDataset
-from datasets.transformations import ConvertKeypoints, Scale, Rotate, CropPad, Flip
+from datasets.transformations import ConvertKeypoints, Scale, Rotate, CropPad, CropPad2, Flip
 from modules.get_parameters import get_parameters_conv, get_parameters_bn, get_parameters_conv_depthwise
 from models.with_mobilenet import PoseEstimationWithMobileNet
 from modules.loss import l2_loss
 from modules.load_state import load_state, load_from_mobilenet
 from val import evaluate
+import numpy as np
 
 cv2.setNumThreads(0)
 cv2.ocl.setUseOpenCL(False)  # To prevent freeze of DataLoader
@@ -23,7 +24,6 @@ cv2.ocl.setUseOpenCL(False)  # To prevent freeze of DataLoader
 def train(prepared_train_labels, train_images_folder, num_refinement_stages, base_lr, batch_size, batches_per_iter,
           num_workers, checkpoint_path, weights_only, from_mobilenet, checkpoints_folder, log_after,
           val_labels, val_images_folder, val_output_name, checkpoint_after, val_after):
-    net = PoseEstimationWithMobileNet(num_refinement_stages)
 
     stride = 8
     sigma = 7
@@ -36,7 +36,27 @@ def train(prepared_train_labels, train_images_folder, num_refinement_stages, bas
                                    Rotate(pad=(128, 128, 128)),
                                    CropPad(pad=(128, 128, 128)),
                                    Flip()]))
+    #dataset = CocoTrainDataset(prepared_train_labels, train_images_folder,
+    #                           stride, sigma, path_thickness,
+    #                           transform=transforms.Compose([
+    #                               ConvertKeypoints(),
+    #                               Scale(),
+    #                               Rotate(pad=(128, 128, 128)),
+    #                               CropPad(pad=(128, 128, 128),center_perterb_max=40, crop_x=1920, crop_y=1920),
+    #                               Flip()]))
+    #dataset = CocoTrainDataset(prepared_train_labels, train_images_folder,
+    #                           stride, sigma, path_thickness,
+    #                           transform=transforms.Compose([
+    #                               ConvertKeypoints(),
+    #                               CropPad2(pad=(128, 128, 128)),
+    #                              Flip()]))
+
+
     train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers)
+
+    net = PoseEstimationWithMobileNet(num_refinement_stages)
+
+
 
     optimizer = optim.Adam([
         {'params': get_parameters_conv(net.model, 'weight')},
@@ -89,6 +109,20 @@ def train(prepared_train_labels, train_images_folder, num_refinement_stages, bas
 
             stages_output = net(images)
 
+            #print('images shape: {}'.format(images.shape))
+            image = images[0,:,:,:].cpu().numpy()
+            image = np.moveaxis(image, [0, 2], [2, 0]) 
+            #print('image shape: {}'.format(image.shape))
+            cv2.imwrite("imgage_tmp.jpg", image * 255)
+            #print('keypoint_masks: {}'.format(keypoint_masks.shape))
+            #print('keypoint_maps: {}'.format(keypoint_maps.shape))
+            #for j in range(0, 19):
+            #    mask = keypoint_masks[0,j,:,:].cpu().numpy()
+            #    cv2.imwrite('mask_tmp_'+str(j)+'.jpg', mask * 255) 
+            #for j in range(0, 19):
+            #    mask = keypoint_maps[0,j,:,:].cpu().numpy()
+            #    cv2.imwrite('keypoint_maps_tmp_'+str(j)+'.jpg', mask * 255) 
+
             losses = []
             for loss_idx in range(len(total_losses) // 2):
                 losses.append(l2_loss(stages_output[loss_idx * 2], keypoint_maps, keypoint_masks, images.shape[0]))
@@ -100,6 +134,8 @@ def train(prepared_train_labels, train_images_folder, num_refinement_stages, bas
             for loss_idx in range(1, len(losses)):
                 loss += losses[loss_idx]
             loss /= batches_per_iter
+            #print('loss: {}'.format(loss))
+
             loss.backward()
             batch_per_iter_idx += 1
             if batch_per_iter_idx == batches_per_iter:
@@ -129,7 +165,7 @@ def train(prepared_train_labels, train_images_folder, num_refinement_stages, bas
             #    print('Validation...')
             #    evaluate(val_labels, val_output_name, val_images_folder, net)
             #    net.train()
-
+    print('</train>\n')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

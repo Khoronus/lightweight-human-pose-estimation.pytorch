@@ -30,6 +30,9 @@ def extract_keypoints(heatmap, all_keypoints, total_keypoint_num):
     keypoints = list(zip(np.nonzero(heatmap_peaks)[1], np.nonzero(heatmap_peaks)[0]))  # (w, h)
     keypoints = sorted(keypoints, key=itemgetter(0))
 
+    #np.savetxt('heatmap_center.txt', heatmap_peaks.reshape(-1))
+    #print('heatmap_center: {}\n'.format(keypoints))
+
     suppressed = np.zeros(len(keypoints), np.uint8)
     keypoints_with_score_and_id = []
     keypoint_num = 0

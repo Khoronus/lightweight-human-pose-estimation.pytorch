@@ -15,7 +15,8 @@ if __name__ == '__main__':
         data = json.load(f)
 
     random.seed(0)
-    total_val_images = 900
+    # 5000 1807
+    total_val_images = 1807
     idxs = list(range(total_val_images))
     random.shuffle(idxs)
 

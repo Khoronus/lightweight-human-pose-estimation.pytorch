@@ -108,22 +108,27 @@ if __name__ == '__main__':
     crowd_segmentations_per_image_mapping = {}
     for annotation in data['annotations']:
         if annotation['iscrowd']:
+            #print('iscrowd\n')
             if annotation['image_id'] not in crowd_segmentations_per_image_mapping:
                 crowd_segmentations_per_image_mapping[annotation['image_id']] = []
+                #print('not in crowd_segmentations_per_image_mapping\n')
             crowd_segmentations_per_image_mapping[annotation['image_id']].append(annotation['segmentation'])
-
+            #print('annotation_segmentation: {}\n'.format(annotation['segmentation']))
+    
     for image_id, crowd_segmentations in crowd_segmentations_per_image_mapping.items():
         if image_id in annotations_per_image_mapping:
             annotations_per_image_mapping[image_id][1] = crowd_segmentations
+            #print('crowd_segmentations: {}\n'.format(crowd_segmentations))
+    #input("Press Enter to continue...")
 
     print('set_images_info\n')
     images_info = {}
     for image_info in data['images']:
-        print('add imageinfo: {} {}\n'.format(image_info['id'], image_info['file_name']))
+        #print('add imageinfo: {} {}\n'.format(image_info['id'], image_info['file_name']))
         images_info[image_info['id']] = image_info
 
     prepared_annotations = prepare_annotations(annotations_per_image_mapping, images_info, args.net_input_size)
-
+    #print('prepared_annotations {}\n'.format(prepared_annotations))
     with open(args.output_name, 'wb') as f:
         pickle.dump(prepared_annotations, f)
 

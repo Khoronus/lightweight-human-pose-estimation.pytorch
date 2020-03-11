@@ -3,13 +3,13 @@ import argparse
 import cv2
 import numpy as np
 import torch
+from torch.nn.modules.module import _addindent
 
 from models.with_mobilenet import PoseEstimationWithMobileNet
 from modules.keypoints import extract_keypoints, group_keypoints
 from modules.load_state import load_state
 from modules.pose import Pose, propagate_ids
 from val import normalize, pad_width
-
 
 class ImageReader(object):
     def __init__(self, file_names):
@@ -61,6 +61,9 @@ def infer_fast(net, img, net_input_height_size, stride, upsample_ratio, cpu,
     min_dims = [net_input_height_size, max(scaled_img.shape[1], net_input_height_size)]
     padded_img, pad = pad_width(scaled_img, stride, pad_value, min_dims)
 
+    cv2.imshow("padded_img", padded_img)
+    key = cv2.waitKey(0)
+
     tensor_img = torch.from_numpy(padded_img).permute(2, 0, 1).unsqueeze(0).float()
     if not cpu:
         tensor_img = tensor_img.cuda()
@@ -91,10 +94,29 @@ def run_demo(net, image_provider, height_size, cpu, track_ids):
         orig_img = img.copy()
         heatmaps, pafs, scale, pad = infer_fast(net, img, height_size, stride, upsample_ratio, cpu)
 
+        # Debug code
+        for j in range(0, 16):
+            heatmap = heatmaps[:,:,j]
+            heatmap = heatmap.reshape((128,128,1))
+            heatmapimg = np.array(heatmap * 255, dtype = np.uint8)
+            heatmap = cv2.applyColorMap(heatmapimg, cv2.COLORMAP_JET)
+            #heatmap = heatmap/255
+            cv2.imwrite('hmtestpadh_'+str(j)+'.jpg', heatmap) 
+        #h_img = TF.to_pil_image(heatmaps)
+        #h_img.save('img_heatmap', 'JPEG')
+        print('heatmaps shape: {}'.format(heatmaps.shape))
+        np.savetxt('heatmaps.txt', heatmaps.reshape(-1))
+        rows, cols, depths = np.nonzero(pafs)
+        print(pafs[rows, cols, depths])
+
+
         total_keypoints_num = 0
         all_keypoints_by_type = []
         for kpt_idx in range(num_keypoints):  # 19th for bg
             total_keypoints_num += extract_keypoints(heatmaps[:, :, kpt_idx], all_keypoints_by_type, total_keypoints_num)
+        
+        # Debug code
+        print('total_keypoints_num: {} {} {}\n'.format(all_keypoints_by_type, total_keypoints_num, kpt_idx))
 
         pose_entries, all_keypoints = group_keypoints(all_keypoints_by_type, pafs, demo=True)
         for kpt_id in range(all_keypoints.shape[0]):
@@ -127,6 +149,32 @@ def run_demo(net, image_provider, height_size, cpu, track_ids):
         if key == 27:  # esc
             return
 
+def torch_summarize(model, show_weights=True, show_parameters=True):
+    """Summarizes torch model by showing trainable parameters and weights."""
+    tmpstr = model.__class__.__name__ + ' (\n'
+    for key, module in model._modules.items():
+        # if it contains layers let call it recursively to get params and weights
+        if type(module) in [
+            torch.nn.modules.container.Container,
+            torch.nn.modules.container.Sequential
+        ]:
+            modstr = torch_summarize(module)
+        else:
+            modstr = module.__repr__()
+        modstr = _addindent(modstr, 2)
+
+        params = sum([np.prod(p.size()) for p in module.parameters()])
+        weights = tuple([tuple(p.size()) for p in module.parameters()])
+
+        tmpstr += '  (' + key + '): ' + modstr 
+        if show_weights:
+            tmpstr += ', weights={}'.format(weights)
+        if show_parameters:
+            tmpstr +=  ', parameters={}'.format(params)
+        tmpstr += '\n'   
+
+    tmpstr = tmpstr + ')'
+    return tmpstr
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -147,6 +195,9 @@ if __name__ == '__main__':
     net = PoseEstimationWithMobileNet()
     checkpoint = torch.load(args.checkpoint_path, map_location='cpu')
     load_state(net, checkpoint)
+
+    # add network summarize for debug
+    print(torch_summarize(net))
 
     frame_provider = ImageReader(args.images)
     if args.video != '':

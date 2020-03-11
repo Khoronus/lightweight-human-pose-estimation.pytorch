@@ -15,6 +15,7 @@ python train.py --train-images-folder datasets/train2017/ --prepared-train-label
 
 Validation
 python demo.py --checkpoint-path default_checkpoints/checkpoint_iter_30000.pth --image "datasets/val2017/000000000872.jpg"
+python demo.py --checkpoint-path default_checkpointsCOCO/checkpoint_iter_130000.pth --image "datasets/val2017/000000000872.jpg"
 
 
 CUSTOM
@@ -43,6 +44,8 @@ python train.py --train-images-folder customdatasets/data/ --prepared-train-labe
 Validation
 python demo.py --checkpoint-path default_checkpoints/checkpoint_iter_30000.pth --video "C:/workspace/university/chuo/projects_online/HumanRecognition/binary/data/2019_11_28_01_53_43.avi"
 python demo.py --checkpoint-path default_checkpoints/checkpoint_iter_30000.pth --image "customdatasets/data/2019_11_15_10_59_31 106754.jpg"
+python demo.py --checkpoint-path default_checkpointsFish/checkpoint_iter_50000.pth --image "customdatasets/data/2019_11_15_10_59_31 106754.jpg"
+python demo.py --checkpoint-path default_checkpointsFish2/checkpoint_iter_140000.pth --image "customdatasets/data/2019_11_15_10_59_31 106754.jpg"
 
 
 

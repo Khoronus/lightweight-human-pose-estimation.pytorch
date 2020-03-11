@@ -37,6 +37,7 @@ class CocoTrainDataset(Dataset):
         image = cv2.imread(os.path.join(self._images_folder, label['img_paths']), cv2.IMREAD_COLOR)
         mask = np.ones(shape=(label['img_height'], label['img_width']), dtype=np.float32)
         mask = get_mask(label['segmentations'], mask)
+        #print('mask shape: {}\n'.format(mask.shape))
         sample = {
             'label': label,
             'image': image,
@@ -45,11 +46,16 @@ class CocoTrainDataset(Dataset):
         if self._transform:
             sample = self._transform(sample)
 
-        mask = cv2.resize(sample['mask'], dsize=None, fx=1/self._stride, fy=1/self._stride, interpolation=cv2.INTER_AREA)
+        #mask = cv2.resize(sample['mask'], dsize=None, fx=1/self._stride, fy=1/self._stride, interpolation=cv2.INTER_AREA)
         keypoint_maps = self._generate_keypoint_maps(sample)
         sample['keypoint_maps'] = keypoint_maps
+        mask = cv2.resize(sample['mask'], (keypoint_maps.shape[1], keypoint_maps.shape[2]), interpolation=cv2.INTER_AREA)
         keypoint_mask = np.zeros(shape=keypoint_maps.shape, dtype=np.float32)
+        
+        #print('compare shapes {} ?= {}'.format(keypoint_maps.shape, mask.shape))
+        
         for idx in range(keypoint_mask.shape[0]):
+            #print('compare shapes {} {} ?= {}'.format(idx, keypoint_mask[idx].shape, mask.shape))
             keypoint_mask[idx] = mask
         sample['keypoint_mask'] = keypoint_mask
 
@@ -60,9 +66,26 @@ class CocoTrainDataset(Dataset):
             paf_mask[idx] = mask
         sample['paf_mask'] = paf_mask
 
+        #cv2.imshow('image', sample['image'])
+
         image = sample['image'].astype(np.float32)
         image = (image - 128) / 256
         sample['image'] = image.transpose((2, 0, 1))
+
+        #cv2.imshow('mask', sample['mask'] * 255)
+        #cv2.imshow('keypoint_mask', sample['keypoint_mask'])
+        #print('label {}\n'.format(sample['label']))
+        #print('keypoint_mask {}\n'.format(sample['keypoint_mask']))
+        #print('paf_maps {}\n'.format(sample['paf_maps']))
+
+        #rows, cols, depths = np.nonzero(sample['paf_maps'])
+        #print(sample['paf_maps'][rows, cols, depths])
+        #rows, cols, depths = np.nonzero(sample['keypoint_mask'])
+        #print(sample['keypoint_mask'][rows, cols, depths])
+        #rows, cols = np.nonzero(sample['mask'])
+        #print(sample['mask'][rows, cols])
+        #cv2.waitKey(1)
+
         return sample
 
     def __len__(self):
