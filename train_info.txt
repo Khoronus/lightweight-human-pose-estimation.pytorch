@@ -46,7 +46,7 @@ python demo.py --checkpoint-path default_checkpoints/checkpoint_iter_30000.pth -
 python demo.py --checkpoint-path default_checkpoints/checkpoint_iter_30000.pth --image "customdatasets/data/2019_11_15_10_59_31 106754.jpg"
 python demo.py --checkpoint-path default_checkpointsFish/checkpoint_iter_50000.pth --image "customdatasets/data/2019_11_15_10_59_31 106754.jpg"
 python demo.py --checkpoint-path default_checkpointsFish2/checkpoint_iter_140000.pth --image "customdatasets/data/2019_11_15_10_59_31 106754.jpg"
-
+python demo.py --checkpoint-path default_checkpointsFish2/checkpoint_iter_140000.pth --image "customdatasets/2019_11_15_10_59_31 106754.jpg"
 
 
 
