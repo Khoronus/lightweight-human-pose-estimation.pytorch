@@ -16,7 +16,7 @@ if __name__ == '__main__':
 
     random.seed(0)
     # 5000 1807
-    total_val_images = 1807
+    total_val_images = 700
     idxs = list(range(total_val_images))
     random.shuffle(idxs)
 
