@@ -9,7 +9,7 @@ from torch.utils.data import DataLoader
 from torchvision import transforms
 
 from datasets.coco import CocoTrainDataset
-from datasets.transformations import ConvertKeypoints, Scale, Rotate, CropPad, CropPad2, Flip
+from datasets.transformationsV2 import ConvertKeypoints, Scale, Rotate, CropPad, CropPad3, Flip
 from modules.get_parameters import get_parameters_conv, get_parameters_bn, get_parameters_conv_depthwise
 from models.with_mobilenet import PoseEstimationWithMobileNet
 from modules.loss import l2_loss
@@ -34,7 +34,7 @@ def test_dataset(prepared_train_labels, train_images_folder, num_refinement_stag
                                    ConvertKeypoints(),
                                    Scale(),
                                    Rotate(pad=(128, 128, 128)),
-                                   CropPad(pad=(128, 128, 128)),
+                                   CropPad3(pad=(128, 128, 128)),
                                    Flip()]))
     #dataset = CocoTrainDataset(prepared_train_labels, train_images_folder,
     #                           stride, sigma, path_thickness,
