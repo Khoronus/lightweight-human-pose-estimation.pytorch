@@ -56,7 +56,7 @@ class ConvertKeypoints(object):
 
 
 class Scale(object):
-    def __init__(self, prob=1, min_scale=0.5, max_scale=1.1, target_dist=0.6):
+    def __init__(self, prob=1, min_scale=0.5, max_scale=1.0, target_dist=0.6):
         self._prob = prob
         self._min_scale = min_scale
         self._max_scale = max_scale
@@ -69,7 +69,7 @@ class Scale(object):
             prob = random.random()
             scale_multiplier = (self._max_scale - self._min_scale) * prob + self._min_scale
         
-        scale_multiplier = 0.15
+        scale_multiplier = 0.137
         label = sample['label']
         scale_abs = self._target_dist / label['scale_provided']
         scale = scale_abs * scale_multiplier
@@ -255,7 +255,7 @@ class CropPad3(object):
         #prob_x = random.random()
         #prob_y = random.random()
 
-        prob_x = 0
+        prob_x = 0.22
         prob_y = 1
         offset_x = int((prob_x - 0.5) * 2 * self._center_perterb_max)
         offset_y = int((prob_y - 0.5) * 2 * self._center_perterb_max)
