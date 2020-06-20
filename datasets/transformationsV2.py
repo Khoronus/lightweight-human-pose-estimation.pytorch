@@ -224,10 +224,15 @@ class CropPad(object):
         for keypoint in label['keypoints']:
             keypoint[0] += offset_left
             keypoint[1] += offset_up
+            # draw keypoints
+            print('keypoints {} {}'.format(keypoint[0],keypoint[1]))
+            cv2.circle(img,(keypoint[0],keypoint[1]), 10, (0,0,255), -1)
         for other_annotation in label['processed_other_annotations']:
             for keypoint in other_annotation['keypoints']:
                 keypoint[0] += offset_left
                 keypoint[1] += offset_up
+                # draw keypoints
+                cv2.circle(img,(keypoint[0],keypoint[1]), 10, (0,255,255), -1)
 
         cv2.imshow('CImage', sample['image'])
         cv2.imshow('Cmask', sample['mask'])
@@ -324,10 +329,15 @@ class CropPad3(object):
         for keypoint in label['keypoints']:
             keypoint[0] += offset_left
             keypoint[1] += offset_up
+            # draw keypoints
+            print('keypoints {} {}'.format(keypoint[0],keypoint[1]))
+            cv2.circle(sample['image'],(int(keypoint[0]),int(keypoint[1])), 2, (0,0,255), -1)
         for other_annotation in label['processed_other_annotations']:
             for keypoint in other_annotation['keypoints']:
                 keypoint[0] += offset_left
                 keypoint[1] += offset_up
+                # draw keypoints
+                cv2.circle(sample['image'],(int(keypoint[0]),int(keypoint[1])), 2, (0,255,255), -1)
 
         cv2.imshow('CImage', sample['image'])
         cv2.imshow('Cmask', sample['mask'])
