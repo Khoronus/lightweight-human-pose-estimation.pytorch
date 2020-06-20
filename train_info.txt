@@ -1,3 +1,6 @@
+activate virtual environment
+d:\envs\env\Scripts\activate
+
 ORIGINAL
 
 Pretrain
