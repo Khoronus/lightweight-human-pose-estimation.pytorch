@@ -51,21 +51,22 @@ def test_dataset(prepared_train_labels, train_images_folder, num_refinement_stag
     #                               CropPad2(pad=(128, 128, 128)),
     #                              Flip()]))
 
-    batch_data = dataset.__getitem__(0)
+    for i in range (0, 30):
+        batch_data = dataset.__getitem__(i)
 
-    print('batch data: {}'.format(batch_data))
+        print('batch data: {}'.format(batch_data))
 
-    images = batch_data['image']
-    keypoint_masks = batch_data['keypoint_mask']
-    paf_masks = batch_data['paf_mask']
-    keypoint_maps = batch_data['keypoint_maps']
-    paf_maps = batch_data['paf_maps']
+        images = batch_data['image']
+        keypoint_masks = batch_data['keypoint_mask']
+        paf_masks = batch_data['paf_mask']
+        keypoint_maps = batch_data['keypoint_maps']
+        paf_maps = batch_data['paf_maps']
 
-    print('images shape: {}'.format(images.shape))
+        print('images shape: {}'.format(images.shape))
 
-    images = np.moveaxis(images, [0, 2], [2, 0]) 
-    #print('image shape: {}'.format(image.shape))
-    cv2.imwrite("imgage_tmp.jpg", images * 255)
+        images = np.moveaxis(images, [0, 2], [2, 0]) 
+        #print('image shape: {}'.format(image.shape))
+        cv2.imwrite("imgage_tmp.jpg", images * 255)
     #print('keypoint_masks: {}'.format(keypoint_masks.shape))
     #print('keypoint_maps: {}'.format(keypoint_maps.shape))
     #for j in range(0, 19):
