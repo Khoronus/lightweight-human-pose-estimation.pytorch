@@ -90,3 +90,6 @@ https://www.programcreek.com/python/example/89433/cv2.applyColorMap
 
 Test Dataset
 python test-dataset.py --train-images-folder customdatasets/data/ --prepared-train-labels prepared_train_annotation.pkl --val-labels customdatasets/annotations/val_subset.json --val-images-folder customdatasets/data/ --checkpoint-path mobilenet_sgd_68.848.pth.tar --from-mobilenet --batch-size 10
+python test-dataset.py --train-images-folder customdatasets/data/ --prepared-train-labels prepared_train_annotation.pkl --val-labels customdatasets/annotations/val_subset.json --val-images-folder customdatasets/data/ --checkpoint-path mobilenet_sgd_68.848.pth.tar --from-mobilenet --batch-size 10
+
+python test-dataset.py --train-images-folder datasets/train2017/ --prepared-train-labels prepared_train_annotation.pkl --val-labels datasets/annotations/val_subset.json --val-images-folder datasets/val2017/ --checkpoint-path mobilenet_sgd_68.848.pth.tar --from-mobilenet --batch-size 10
