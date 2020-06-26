@@ -9,7 +9,7 @@ from torch.utils.data import DataLoader
 from torchvision import transforms
 
 from datasets.coco import CocoTrainDataset
-from datasets.transformationsV2 import ConvertKeypoints, Scale, Rotate, CropPad, CropPad3, Flip
+from datasets.transformationsV3 import ConvertKeypoints, Scale, Rotate, CropPad, CropPad3, Flip
 from modules.get_parameters import get_parameters_conv, get_parameters_bn, get_parameters_conv_depthwise
 from models.with_mobilenet import PoseEstimationWithMobileNet
 from modules.loss import l2_loss

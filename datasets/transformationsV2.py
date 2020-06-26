@@ -64,15 +64,17 @@ class Scale(object):
 
     def __call__(self, sample):
         prob = random.random()
+        prob = 0
         scale_multiplier = 1
-        if prob <= self._prob:
-            prob = random.random()
-            scale_multiplier = (self._max_scale - self._min_scale) * prob + self._min_scale
+        #if prob <= self._prob:
+        #    prob = random.random()
+        #    scale_multiplier = (self._max_scale - self._min_scale) * prob + self._min_scale
         
         scale_multiplier = 0.137
         label = sample['label']
         scale_abs = self._target_dist / label['scale_provided']
-        scale = scale_abs * scale_multiplier
+        #scale = scale_abs * scale_multiplier
+        scale = 0.337
         sample['image'] = cv2.resize(sample['image'], dsize=(0, 0), fx=scale, fy=scale)
         label['img_height'], label['img_width'], _ = sample['image'].shape
         cv2.imshow('maskA', sample['mask'])
@@ -157,6 +159,8 @@ class CropPad(object):
     def __call__(self, sample):
         prob_x = random.random()
         prob_y = random.random()
+        prob_x = 0.5
+        prob_y = 0.5
 
         offset_x = int((prob_x - 0.5) * 2 * self._center_perterb_max)
         offset_y = int((prob_y - 0.5) * 2 * self._center_perterb_max)
