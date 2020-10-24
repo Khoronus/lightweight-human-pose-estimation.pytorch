@@ -32,7 +32,7 @@ class ConvertKeypoints(object):
         for other_label in label['processed_other_annotations']:
             other_label['keypoints'] = self._convert(other_label['keypoints'], w, h)
 
-        print('sample: {}'.format(sample))
+        #print('sample: {}'.format(sample))
         return sample
 
     def _convert(self, keypoints, w, h):
@@ -70,18 +70,19 @@ class Scale(object):
         #    prob = random.random()
         #    scale_multiplier = (self._max_scale - self._min_scale) * prob + self._min_scale
         
-        scale_multiplier = 0.137
+        scale_multiplier = 0.15
         label = sample['label']
         scale_abs = self._target_dist / label['scale_provided']
         #scale = scale_abs * scale_multiplier
-        scale = 0.337
+        #scale = 0.337
+        scale = 0.325
         sample['image'] = cv2.resize(sample['image'], dsize=(0, 0), fx=scale, fy=scale)
         label['img_height'], label['img_width'], _ = sample['image'].shape
-        cv2.imshow('maskA', sample['mask'])
+        #cv2.imshow('maskA', sample['mask'])
         sample['mask'] = cv2.resize(sample['mask'], dsize=(0, 0), fx=scale, fy=scale)
-        cv2.imshow('maskB', sample['mask'])
-        print('scale: {}'.format(scale))
-        cv2.waitKey(0)
+        #cv2.imshow('maskB', sample['mask'])
+        #print('scale: {}'.format(scale))
+        #cv2.waitKey(0)
         #print('mask scale: {}'.format(sample['mask'].shape))
         
         label['objpos'][0] *= scale
@@ -136,10 +137,10 @@ class Rotate(object):
                 point = self._rotate(point, R)
                 keypoint[0], keypoint[1] = point[0], point[1]
 
-        cv2.imshow('RImage', sample['image'])
-        cv2.imshow('Rmask', sample['mask'])
-        print('Rlabel: {}'.format(label['objpos']))
-        cv2.waitKey(0)
+        #cv2.imshow('RImage', sample['image'])
+        #cv2.imshow('Rmask', sample['mask'])
+        #print('Rlabel: {}'.format(label['objpos']))
+        #cv2.waitKey(0)
 
 
         return sample
@@ -229,19 +230,19 @@ class CropPad(object):
             keypoint[0] += offset_left
             keypoint[1] += offset_up
             # draw keypoints
-            print('keypoints {} {}'.format(keypoint[0],keypoint[1]))
-            cv2.circle(img,(keypoint[0],keypoint[1]), 10, (0,0,255), -1)
+            #print('keypoints {} {}'.format(keypoint[0],keypoint[1]))
+            #cv2.circle(img,(keypoint[0],keypoint[1]), 10, (0,0,255), -1)
         for other_annotation in label['processed_other_annotations']:
             for keypoint in other_annotation['keypoints']:
                 keypoint[0] += offset_left
                 keypoint[1] += offset_up
                 # draw keypoints
-                cv2.circle(img,(keypoint[0],keypoint[1]), 10, (0,255,255), -1)
+                #cv2.circle(img,(keypoint[0],keypoint[1]), 10, (0,255,255), -1)
 
-        cv2.imshow('CImage', sample['image'])
-        cv2.imshow('Cmask', sample['mask'])
-        print('Clabel: {}'.format(label['objpos']))
-        cv2.waitKey(0)
+        #cv2.imshow('CImage', sample['image'])
+        #cv2.imshow('Cmask', sample['mask'])
+        #print('Clabel: {}'.format(label['objpos']))
+        #cv2.waitKey(0)
 
         return sample
 
@@ -296,27 +297,27 @@ class CropPad3(object):
         label['objpos'][0]
         label['objpos'][1]
 
-        print('label: {}'.format(label))
+        #print('label: {}'.format(label))
 
 
         for keypoint in label['keypoints']:
             keypoint[0]
             keypoint[1]
             # draw keypoints
-            print('keypoints {} {}'.format(keypoint[0],keypoint[1]))
-            cv2.circle(sample['image'],(int(keypoint[0]),int(keypoint[1])), 2, (0,0,255), -1)
+            #print('keypoints {} {}'.format(keypoint[0],keypoint[1]))
+            #cv2.circle(sample['image'],(int(keypoint[0]),int(keypoint[1])), 2, (0,0,255), -1)
         for other_annotation in label['processed_other_annotations']:
             for keypoint in other_annotation['keypoints']:
                 keypoint[0]
                 keypoint[1]
                 # draw keypoints
-                cv2.circle(sample['image'],(int(keypoint[0]),int(keypoint[1])), 2, (0,255,255), -1)
+                #cv2.circle(sample['image'],(int(keypoint[0]),int(keypoint[1])), 2, (0,255,255), -1)
 
-        cv2.imshow('CImage', sample['image'])
-        cv2.imshow('Cmask', sample['mask'])
-        print('Cobjpos: {}'.format(label['objpos']))
-        print('Ckeypoints: {}'.format(label['keypoints']))
-        cv2.waitKey(0)
+        #cv2.imshow('CImage', sample['image'])
+        #cv2.imshow('Cmask', sample['mask'])
+        #print('Cobjpos: {}'.format(label['objpos']))
+        #print('Ckeypoints: {}'.format(label['keypoints']))
+        #cv2.waitKey(0)
 
         return sample
 
